@@ -22,7 +22,8 @@ func main() {
 		os.Exit(0)
 	}
 
-	request.StartBatch(flag.Args(), *parallelCount)
+	output := request.NewOutput()
+	request.StartBatch(flag.Args(), *parallelCount, output)
 
 	end := time.Now()
 	diff := end.Sub(start)

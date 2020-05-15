@@ -4,10 +4,10 @@ import "net/http"
 
 type (
 	Client struct {
-		http httpClient
+		http HttpClient
 	}
 
-	httpClient interface {
+	HttpClient interface {
 		Do(req *http.Request) (*http.Response, error)
 	}
 )

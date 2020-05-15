@@ -7,7 +7,17 @@ import (
 	"github.com/manue1/myhttp/internal/result"
 )
 
-func StartBatch(urls []string, parallelCount int) {
+var reqClient result.Client
+
+func init() {
+	reqClient = result.NewClient()
+}
+
+func StartBatch(
+	urls []string,
+	parallelCount int,
+	output printer,
+) {
 	log.Println("urls: ", urls)
 
 	var (
@@ -20,7 +30,7 @@ func StartBatch(urls []string, parallelCount int) {
 	)
 
 	go allocateUrls(urls, urlChan)
-	go printResults(done, results)
+	go output.Print(done, results)
 
 	if urlCount < parallelCount {
 		workerCount = urlCount
@@ -39,14 +49,6 @@ func allocateUrls(urls []string, urlChan chan string) {
 	close(urlChan)
 }
 
-func printResults(done chan struct{}, results chan result.Page) {
-	for r := range results {
-		log.Printf(r.String())
-	}
-
-	done <- struct{}{}
-}
-
 func createWorkerPool(workerCount int, urls chan string, results chan result.Page) {
 	var wg sync.WaitGroup
 
@@ -60,9 +62,8 @@ func createWorkerPool(workerCount int, urls chan string, results chan result.Pag
 }
 
 func worker(wg *sync.WaitGroup, urls chan string, results chan result.Page) {
-	resultClient := result.NewClient()
 	for url := range urls {
-		r := resultClient.Get(url)
+		r := reqClient.Get(url)
 		results <- r
 	}
 
