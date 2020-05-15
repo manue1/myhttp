@@ -24,10 +24,13 @@ func (c Client) Get(argUrl string) Page {
 
 	resp, err := c.doRequest(url)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("failed to do request: %v", err)
 	}
 
-	hashResponse := computeHash(resp)
+	hashResponse, err := computeHash(resp)
+	if err != nil {
+		log.Fatalf("failed to compute hash: %v", err)
+	}
 
 	return Page{URL: url, HashResponse: hashResponse}
 }
@@ -65,9 +68,13 @@ func sanitizeProtocol(url string) string {
 	return sanitized
 }
 
-func computeHash(response []byte) string {
+func computeHash(response []byte) (string, error) {
 	h := md5.New()
-	h.Write(response)
 
-	return hex.EncodeToString(h.Sum(nil))
+	_, err := h.Write(response)
+	if err != nil {
+		return "", err
+	}
+
+	return hex.EncodeToString(h.Sum(nil)), nil
 }
