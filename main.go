@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/manue1/myhttp/internal/result"
 	"github.com/manue1/myhttp/pkg/request"
 )
 
@@ -22,8 +23,9 @@ func main() {
 		os.Exit(0)
 	}
 
+	reqClient := result.NewClient()
 	output := request.NewOutput()
-	request.StartBatch(flag.Args(), *parallelCount, output)
+	request.StartBatch(flag.Args(), *parallelCount, reqClient, output)
 
 	end := time.Now()
 	diff := end.Sub(start)

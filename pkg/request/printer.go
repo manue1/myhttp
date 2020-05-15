@@ -21,7 +21,7 @@ func NewOutput() Output {
 
 func (o Output) Print(done chan struct{}, results chan result.Page) {
 	for r := range results {
-		log.Printf(r.String())
+		log.Print(r.String())
 	}
 
 	done <- struct{}{}

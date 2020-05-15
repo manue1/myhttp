@@ -11,12 +11,12 @@ import (
 )
 
 type Page struct {
-	url          string
-	hashResponse string
+	URL          string
+	HashResponse string
 }
 
 func (r Page) String() string {
-	return fmt.Sprintf("%s %s", r.url, r.hashResponse)
+	return fmt.Sprintf("%s %s", r.URL, r.HashResponse)
 }
 
 func (c Client) Get(argUrl string) Page {
@@ -29,7 +29,7 @@ func (c Client) Get(argUrl string) Page {
 
 	hashResponse := computeHash(resp)
 
-	return Page{url, hashResponse}
+	return Page{URL: url, HashResponse: hashResponse}
 }
 
 func (c Client) doRequest(url string) ([]byte, error) {
@@ -38,7 +38,7 @@ func (c Client) doRequest(url string) ([]byte, error) {
 		return nil, err
 	}
 
-	resp, err := c.http.Do(req)
+	resp, err := c.Http.Do(req)
 	if err != nil {
 		return nil, err
 	}

@@ -1,25 +1,17 @@
 package request
 
 import (
-	"log"
 	"sync"
 
 	"github.com/manue1/myhttp/internal/result"
 )
 
-var reqClient result.Client
-
-func init() {
-	reqClient = result.NewClient()
-}
-
 func StartBatch(
 	urls []string,
 	parallelCount int,
+	reqClient result.Client,
 	output printer,
 ) {
-	log.Println("urls: ", urls)
-
 	var (
 		urlCount    = len(urls)
 		workerCount = parallelCount
@@ -36,7 +28,7 @@ func StartBatch(
 		workerCount = urlCount
 	}
 
-	createWorkerPool(workerCount, urlChan, results)
+	createWorkerPool(reqClient, workerCount, urlChan, results)
 
 	<-done
 }
@@ -49,21 +41,22 @@ func allocateUrls(urls []string, urlChan chan string) {
 	close(urlChan)
 }
 
-func createWorkerPool(workerCount int, urls chan string, results chan result.Page) {
+func createWorkerPool(reqClient result.Client, workerCount int, urls chan string, results chan result.Page) {
 	var wg sync.WaitGroup
 
 	for i := 0; i < workerCount; i++ {
 		wg.Add(1)
-		go worker(&wg, urls, results)
+		go worker(&wg, reqClient, urls, results)
 	}
 
 	wg.Wait()
 	close(results)
 }
 
-func worker(wg *sync.WaitGroup, urls chan string, results chan result.Page) {
+func worker(wg *sync.WaitGroup, reqClient result.Client, urls chan string, results chan result.Page) {
 	for url := range urls {
 		r := reqClient.Get(url)
+
 		results <- r
 	}
 

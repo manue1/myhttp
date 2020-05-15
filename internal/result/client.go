@@ -4,7 +4,7 @@ import "net/http"
 
 type (
 	Client struct {
-		http HttpClient
+		Http HttpClient
 	}
 
 	HttpClient interface {
@@ -14,6 +14,6 @@ type (
 
 func NewClient() Client {
 	return Client{
-		http: &http.Client{},
+		Http: &http.Client{},
 	}
 }

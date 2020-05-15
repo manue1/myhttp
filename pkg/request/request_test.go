@@ -3,82 +3,48 @@ package request
 import (
 	"testing"
 
+	"github.com/manue1/myhttp/internal/result"
 	"github.com/manue1/myhttp/test/mocks"
 )
 
 func TestStartBatch(t *testing.T) {
 	testCases := []struct {
-		scenario    string
-		url         string
-		expectedURL string
-		fn          func(*testing.T, string, Page)
+		scenario      string
+		urls          []string
+		parallelCount int
 	}{
 		{
-			scenario:    "Test success - with already sanitized URL",
-			url:         "http://adjust.com",
-			expectedURL: "http://adjust.com",
-			fn:          testSuccessAlreadySanitizedURL,
-		},
-		{
-			scenario:    "Test success - with unsanitized URL",
-			url:         "facebook.com",
-			expectedURL: "http://facebook.com",
-			fn:          testSuccessUnsanitizedURL,
-		},
-		{
-			scenario:    "Test failure - empty response body",
-			url:         "localhost.com",
-			expectedURL: "http://localhost.com",
-			fn:          testFailureEmptyBody,
+			scenario:      "Test success",
+			urls:          []string{"http://adjust.com", "http://facebook.com"},
+			parallelCount: 2,
 		},
 	}
 
-	reqClient = mocks.Client
-
 	for _, tc := range testCases {
 		t.Run(tc.scenario, func(t *testing.T) {
+			outputMock := outputMock{t}
+			clientMock := result.Client{
+				Http: &mocks.Client{},
+			}
 
-			page := client.Get(tc.url)
-			tc.fn(t, tc.expectedURL, page)
+			StartBatch(tc.urls, tc.parallelCount, clientMock, outputMock)
 		})
 	}
 }
 
-func testSuccessAlreadySanitizedURL(t *testing.T, expectedURL string, actualPage Page) {
-	if expectedURL != actualPage.url {
-		t.Errorf("unexpected url: got %s want %s",
-			actualPage.url, expectedURL)
-	}
-
-	expectedHash := mocks.GetMockMD5(expectedURL)
-	if expectedHash != actualPage.hashResponse {
-		t.Errorf("unexpected md5 hash: got %s want %s",
-			actualPage.hashResponse, expectedHash)
-	}
+type outputMock struct {
+	t *testing.T
 }
 
-func testSuccessUnsanitizedURL(t *testing.T, expectedURL string, actualPage Page) {
-	if expectedURL != actualPage.url {
-		t.Errorf("unexpected url: got %s want %s",
-			actualPage.url, expectedURL)
+func (o outputMock) Print(done chan struct{}, results chan result.Page) {
+	for r := range results {
+
+		expectedHash := mocks.GetMockMD5(r.URL)
+		if expectedHash != r.HashResponse {
+			o.t.Errorf("unexpected md5 hash: got %s want %s",
+				r.HashResponse, expectedHash)
+		}
 	}
 
-	expectedHash := mocks.GetMockMD5(expectedURL)
-	if expectedHash != actualPage.hashResponse {
-		t.Errorf("unexpected md5 hash: got %s want %s",
-			actualPage.hashResponse, expectedHash)
-	}
-}
-
-func testFailureEmptyBody(t *testing.T, expectedURL string, actualPage Page) {
-	if expectedURL != actualPage.url {
-		t.Errorf("unexpected url: got %s want %s",
-			actualPage.url, expectedURL)
-	}
-
-	emptyResponseHash := "d41d8cd98f00b204e9800998ecf8427e"
-	if emptyResponseHash != actualPage.hashResponse {
-		t.Errorf("unexpected md5 hash: got %s want %s",
-			actualPage.hashResponse, emptyResponseHash)
-	}
+	done <- struct{}{}
 }

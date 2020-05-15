@@ -34,7 +34,7 @@ func TestGet(t *testing.T) {
 	}
 
 	client := Client{
-		http: &mocks.Client{},
+		Http: &mocks.Client{},
 	}
 
 	for _, tc := range testCases {
@@ -47,40 +47,40 @@ func TestGet(t *testing.T) {
 }
 
 func testSuccessAlreadySanitizedURL(t *testing.T, expectedURL string, actualPage Page) {
-	if expectedURL != actualPage.url {
+	if expectedURL != actualPage.URL {
 		t.Errorf("unexpected url: got %s want %s",
-			actualPage.url, expectedURL)
+			actualPage.URL, expectedURL)
 	}
 
 	expectedHash := mocks.GetMockMD5(expectedURL)
-	if expectedHash != actualPage.hashResponse {
+	if expectedHash != actualPage.HashResponse {
 		t.Errorf("unexpected md5 hash: got %s want %s",
-			actualPage.hashResponse, expectedHash)
+			actualPage.HashResponse, expectedHash)
 	}
 }
 
 func testSuccessUnsanitizedURL(t *testing.T, expectedURL string, actualPage Page) {
-	if expectedURL != actualPage.url {
+	if expectedURL != actualPage.URL {
 		t.Errorf("unexpected url: got %s want %s",
-			actualPage.url, expectedURL)
+			actualPage.URL, expectedURL)
 	}
 
 	expectedHash := mocks.GetMockMD5(expectedURL)
-	if expectedHash != actualPage.hashResponse {
+	if expectedHash != actualPage.HashResponse {
 		t.Errorf("unexpected md5 hash: got %s want %s",
-			actualPage.hashResponse, expectedHash)
+			actualPage.HashResponse, expectedHash)
 	}
 }
 
 func testFailureEmptyBody(t *testing.T, expectedURL string, actualPage Page) {
-	if expectedURL != actualPage.url {
+	if expectedURL != actualPage.URL {
 		t.Errorf("unexpected url: got %s want %s",
-			actualPage.url, expectedURL)
+			actualPage.URL, expectedURL)
 	}
 
 	emptyResponseHash := "d41d8cd98f00b204e9800998ecf8427e"
-	if emptyResponseHash != actualPage.hashResponse {
+	if emptyResponseHash != actualPage.HashResponse {
 		t.Errorf("unexpected md5 hash: got %s want %s",
-			actualPage.hashResponse, emptyResponseHash)
+			actualPage.HashResponse, emptyResponseHash)
 	}
 }
