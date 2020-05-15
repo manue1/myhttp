@@ -1,4 +1,4 @@
-package handler
+package result
 
 import (
 	"crypto/md5"
@@ -10,16 +10,16 @@ import (
 	"strings"
 )
 
-type Result struct {
+type Page struct {
 	url          string
 	hashResponse string
 }
 
-func (r Result) String() string {
+func (r Page) String() string {
 	return fmt.Sprintf("%s %s", r.url, r.hashResponse)
 }
 
-func GetHashedResponse(argUrl string) Result {
+func Get(argUrl string) Page {
 	url := sanitizeProtocol(argUrl)
 
 	resp, err := doRequest(url)
@@ -29,7 +29,7 @@ func GetHashedResponse(argUrl string) Result {
 
 	hashResponse := computeHash(resp)
 
-	return Result{url, hashResponse}
+	return Page{url, hashResponse}
 }
 
 func doRequest(url string) ([]byte, error) {
