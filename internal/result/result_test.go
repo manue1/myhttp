@@ -1,6 +1,7 @@
 package result
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/manue1/myhttp/test/mocks"
@@ -17,13 +18,13 @@ func TestGet(t *testing.T) {
 			scenario:    "Test success - with already sanitized URL",
 			url:         "http://adjust.com",
 			expectedURL: "http://adjust.com",
-			fn:          testSuccessAlreadySanitizedURL,
+			fn:          testSuccess,
 		},
 		{
 			scenario:    "Test success - with unsanitized URL",
 			url:         "facebook.com",
 			expectedURL: "http://facebook.com",
-			fn:          testSuccessUnsanitizedURL,
+			fn:          testSuccess,
 		},
 		{
 			scenario:    "Test failure - empty response body",
@@ -46,7 +47,7 @@ func TestGet(t *testing.T) {
 	}
 }
 
-func testSuccessAlreadySanitizedURL(t *testing.T, expectedURL string, actualPage Page) {
+func testSuccess(t *testing.T, expectedURL string, actualPage Page) {
 	if expectedURL != actualPage.URL {
 		t.Errorf("unexpected url: got %s want %s",
 			actualPage.URL, expectedURL)
@@ -57,18 +58,11 @@ func testSuccessAlreadySanitizedURL(t *testing.T, expectedURL string, actualPage
 		t.Errorf("unexpected md5 hash: got %s want %s",
 			actualPage.HashResponse, expectedHash)
 	}
-}
 
-func testSuccessUnsanitizedURL(t *testing.T, expectedURL string, actualPage Page) {
-	if expectedURL != actualPage.URL {
-		t.Errorf("unexpected url: got %s want %s",
-			actualPage.URL, expectedURL)
-	}
-
-	expectedHash := mocks.GetMockMD5(expectedURL)
-	if expectedHash != actualPage.HashResponse {
-		t.Errorf("unexpected md5 hash: got %s want %s",
-			actualPage.HashResponse, expectedHash)
+	expectedCombined := fmt.Sprintf("%s %s", expectedURL, expectedHash)
+	if expectedCombined != actualPage.String() {
+		t.Errorf("unexpected page string: got %s want %s",
+			actualPage.String(), expectedCombined)
 	}
 }
 
