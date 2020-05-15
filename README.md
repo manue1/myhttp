@@ -8,7 +8,7 @@ MD5 hash of the response.
 In order to run this tool it first needs to be built.
 
 ```bash
-go build
+make build
 ```
 
 The usage of the tool is limited to the following arguments:
@@ -27,3 +27,11 @@ Examples:
 ```
 
 Please note that currently only the HTTP protocol is supported.
+
+## Tests
+
+For running the unit-tests a make target is set up.
+
+```bash
+make unit-test
+```
