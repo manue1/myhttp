@@ -83,8 +83,9 @@ func createWorkerPool(workerCount int, urls chan string, results chan result.Pag
 }
 
 func worker(wg *sync.WaitGroup, urls chan string, results chan result.Page) {
+	resultClient := result.NewClient()
 	for url := range urls {
-		r := result.Get(url)
+		r := resultClient.Get(url)
 		results <- r
 	}
 

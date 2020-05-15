@@ -19,10 +19,10 @@ func (r Page) String() string {
 	return fmt.Sprintf("%s %s", r.url, r.hashResponse)
 }
 
-func Get(argUrl string) Page {
+func (c Client) Get(argUrl string) Page {
 	url := sanitizeProtocol(argUrl)
 
-	resp, err := doRequest(url)
+	resp, err := c.doRequest(url)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -32,13 +32,13 @@ func Get(argUrl string) Page {
 	return Page{url, hashResponse}
 }
 
-func doRequest(url string) ([]byte, error) {
+func (c Client) doRequest(url string) ([]byte, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := c.http.Do(req)
 	if err != nil {
 		return nil, err
 	}
