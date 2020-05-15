@@ -14,9 +14,14 @@ func TestStartBatch(t *testing.T) {
 		parallelCount int
 	}{
 		{
-			scenario:      "Test success",
+			scenario:      "Test success - custom parallel value",
 			urls:          []string{"http://adjust.com", "http://facebook.com"},
-			parallelCount: 2,
+			parallelCount: 1,
+		},
+		{
+			scenario:      "Test success - default parallel value",
+			urls:          []string{"adjust.com", "facebook.com", "google.com", "twitter.com"},
+			parallelCount: 10,
 		},
 	}
 
@@ -38,7 +43,6 @@ type outputMock struct {
 
 func (o outputMock) Print(done chan struct{}, results chan result.Page) {
 	for r := range results {
-
 		expectedHash := mocks.GetMockMD5(r.URL)
 		if expectedHash != r.HashResponse {
 			o.t.Errorf("unexpected md5 hash: got %s want %s",
