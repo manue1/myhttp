@@ -1,4 +1,4 @@
-package request
+package job
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 	"github.com/manue1/myhttp/test/mocks"
 )
 
-func TestStartBatch(t *testing.T) {
+func TestStartJob(t *testing.T) {
 	testCases := []struct {
 		scenario      string
 		urls          []string
@@ -32,7 +32,7 @@ func TestStartBatch(t *testing.T) {
 				Http: &mocks.Client{},
 			}
 
-			StartBatch(tc.urls, tc.parallelCount, clientMock, outputMock)
+			Start(tc.urls, tc.parallelCount, clientMock, outputMock)
 		})
 	}
 }

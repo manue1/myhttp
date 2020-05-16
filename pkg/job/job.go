@@ -1,4 +1,4 @@
-package request
+package job
 
 import (
 	"sync"
@@ -6,11 +6,11 @@ import (
 	"github.com/manue1/myhttp/internal/result"
 )
 
-func StartBatch(
+func Start(
 	urls []string,
 	parallelCount int,
 	reqClient result.Client,
-	output printer,
+	output outputPrinter,
 ) {
 	var (
 		urlCount    = len(urls)

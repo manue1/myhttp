@@ -1,4 +1,4 @@
-package request
+package job
 
 import (
 	"log"
@@ -8,9 +8,9 @@ import (
 
 type (
 	Output struct {
-		printer
+		outputPrinter
 	}
-	printer interface {
+	outputPrinter interface {
 		Print(chan struct{}, chan result.Page)
 	}
 )
