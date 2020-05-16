@@ -12,6 +12,7 @@ type (
 	}
 )
 
+// NewClient returns a new Client with the default HTTP client
 func NewClient() Client {
 	return Client{
 		Http: &http.Client{},

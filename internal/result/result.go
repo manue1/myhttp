@@ -10,15 +10,18 @@ import (
 	"strings"
 )
 
+// Page holds the response of a single page
 type Page struct {
 	URL          string
 	HashResponse string
 }
 
+// String is a custom string method that returns the required output format
 func (r Page) String() string {
 	return fmt.Sprintf("%s %s", r.URL, r.HashResponse)
 }
 
+// Get returns the sanitized URL and hashed response body of a given URL
 func (c Client) Get(argUrl string) Page {
 	url := sanitizeProtocol(argUrl)
 
@@ -35,6 +38,7 @@ func (c Client) Get(argUrl string) Page {
 	return Page{URL: url, HashResponse: hashResponse}
 }
 
+// doRequest does the actual HTTP request
 func (c Client) doRequest(url string) ([]byte, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -55,6 +59,7 @@ func (c Client) doRequest(url string) ([]byte, error) {
 	return body, nil
 }
 
+// sanitizeProtocol ensures the URL contains the protocol
 func sanitizeProtocol(url string) string {
 	var (
 		protocol  = "http://"
@@ -68,6 +73,7 @@ func sanitizeProtocol(url string) string {
 	return sanitized
 }
 
+// computeHash calculates the md5 hash
 func computeHash(response []byte) (string, error) {
 	h := md5.New()
 

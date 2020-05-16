@@ -6,6 +6,8 @@ import (
 	"github.com/manue1/myhttp/internal/result"
 )
 
+// Start creates the worker pool, waits for the workers to finish
+// and passes their results to the provided output
 func Start(
 	urls []string,
 	parallelCount int,
@@ -33,6 +35,7 @@ func Start(
 	<-done
 }
 
+// allocateUrls allocates the urls in the channel
 func allocateUrls(urls []string, urlChan chan string) {
 	for _, url := range urls {
 		urlChan <- url
@@ -41,6 +44,7 @@ func allocateUrls(urls []string, urlChan chan string) {
 	close(urlChan)
 }
 
+// createWorkerPool creates the amount of needed workers and waits for them to finish
 func createWorkerPool(reqClient result.Client, workerCount int, urls chan string, results chan result.Page) {
 	var wg sync.WaitGroup
 
@@ -53,6 +57,7 @@ func createWorkerPool(reqClient result.Client, workerCount int, urls chan string
 	close(results)
 }
 
+// worker retrieves the result from the client and puts them in the result channel
 func worker(wg *sync.WaitGroup, reqClient result.Client, urls chan string, results chan result.Page) {
 	for url := range urls {
 		r := reqClient.Get(url)
