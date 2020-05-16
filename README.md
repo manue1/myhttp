@@ -11,6 +11,7 @@ In order to run this tool it first needs to be built. Please ensure to have [Go 
 make build
 ```
 
+The binary is now present in the current working directory and may be run.
 The usage of the tool is limited to the following arguments:
 
 ```
