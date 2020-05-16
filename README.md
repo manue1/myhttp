@@ -5,7 +5,7 @@ MD5 hash of the response.
 
 ## Usage
 
-In order to run this tool it first needs to be built.
+In order to run this tool it first needs to be built. Please ensure to have [Go 1.14](https://golang.org/dl/) installed.
 
 ```bash
 make build
